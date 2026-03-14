@@ -188,12 +188,12 @@ const HOME_PAGE_OVERRIDES = {
         ui: {
           ratingLabel: 'Рейтинг',
           missingTokenTitle:
-            'Подключите токен Mapbox, чтобы отобразить интерактивную карту',
+            'Интерактивная карта загружается автоматически',
           missingTokenDescription:
-            'Добавьте `VITE_MAPBOX_ACCESS_TOKEN` в `.env.local`, и карта автоматически появится в этом блоке.',
-          loadErrorTitle: 'Не удалось загрузить карту Mapbox',
+            'Если карта не появилась, проверьте подключение к интернету и обновите страницу.',
+          loadErrorTitle: 'Не удалось загрузить карту',
           loadErrorDescription:
-            'Проверьте токен, стиль карты и сетевое подключение. После этого блок перерисуется автоматически.',
+            'Проверьте подключение к интернету и перезагрузите страницу. После этого блок перерисуется автоматически.',
         },
       },
     },
@@ -329,12 +329,12 @@ const HOME_PAGE_OVERRIDES = {
         ui: {
           ratingLabel: 'Reyting',
           missingTokenTitle:
-            'Interaktiv xaritani ko‘rsatish uchun Mapbox tokenini ulang',
+            'Interaktiv xarita avtomatik yuklanadi',
           missingTokenDescription:
-            '`VITE_MAPBOX_ACCESS_TOKEN` ni `.env.local` ga qo‘shing, xarita shu blokda avtomatik ko‘rinadi.',
-          loadErrorTitle: 'Mapbox xaritasini yuklab bo‘lmadi',
+            'Agar xarita ko‘rinmasa, internet ulanishini tekshirib sahifani qayta yuklang.',
+          loadErrorTitle: 'Xaritani yuklab bo‘lmadi',
           loadErrorDescription:
-            'Token, xarita uslubi va tarmoq ulanishini tekshiring. Shundan so‘ng blok avtomatik yangilanadi.',
+            'Internet ulanishini tekshiring va sahifani qayta yuklang. Shundan so‘ng blok avtomatik yangilanadi.',
         },
       },
       leaderboard: {
@@ -618,12 +618,12 @@ const HOME_PAGE_OVERRIDES = {
         ui: {
           ratingLabel: 'Rating',
           missingTokenTitle:
-            'Add a Mapbox token to display the interactive map',
+            'The interactive map loads automatically',
           missingTokenDescription:
-            'Add `VITE_MAPBOX_ACCESS_TOKEN` to `.env.local`, and the map will appear in this block automatically.',
-          loadErrorTitle: 'Could not load the Mapbox map',
+            'If the map does not appear, check your internet connection and reload the page.',
+          loadErrorTitle: 'Could not load the map',
           loadErrorDescription:
-            'Check the token, map style, and network connection. The block will redraw automatically afterwards.',
+            'Check the network connection and reload the page. The block will redraw automatically afterwards.',
         },
       },
       leaderboard: {
