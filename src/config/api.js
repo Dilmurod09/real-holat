@@ -13,6 +13,9 @@ export const apiConfig = {
     infrastructures:
       import.meta.env.VITE_API_INFRASTRUCTURES_ENDPOINT ??
       'https://realholat-production.up.railway.app/api/v1/infrastructures',
+    routing:
+      import.meta.env.VITE_API_ROUTING_ENDPOINT ??
+      'https://router.project-osrm.org/route/v1/driving',
   },
 }
 

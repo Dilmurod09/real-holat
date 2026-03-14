@@ -107,6 +107,7 @@ function createPointFromInfrastructure(infrastructure, map) {
     checkItemsCount: Array.isArray(infrastructure.check_items)
       ? infrastructure.check_items.length
       : 0,
+    verifiedReportsCount: toNumber(infrastructure.verified_reports_count) ?? 0,
     latitude: coordinates[1],
     longitude: coordinates[0],
   }
@@ -118,6 +119,20 @@ function createLeaderboardRow(point) {
     status: point.statusLabel,
     statusTone: point.statusTone,
     rating: point.rating,
+  }
+}
+
+function createSchoolRow(infrastructure, index, ui) {
+  const noDataLabel = ui?.noDataLabel ?? 'N/A'
+  const complaints = toNumber(infrastructure.verified_reports_count)
+
+  return {
+    num: index + 1,
+    name: infrastructure.name || ui?.untitledLabel || noDataLabel,
+    region: infrastructure.address || noDataLabel,
+    complaints: complaints ?? 0,
+    rating: formatRating(infrastructure.overall_rating, noDataLabel),
+    highlight: index === 0,
   }
 }
 
@@ -167,5 +182,23 @@ export function buildInfrastructureContent({
           rows,
         }
       : leaderboard,
+  }
+}
+
+export function buildSchoolsTableContent({
+  schoolsTable,
+  infrastructures = [],
+  count = 0,
+} = {}) {
+  const rows = infrastructures.map((infrastructure, index) =>
+    createSchoolRow(infrastructure, index, schoolsTable?.ui),
+  )
+
+  return {
+    count,
+    schoolsTable: {
+      ...schoolsTable,
+      rows,
+    },
   }
 }

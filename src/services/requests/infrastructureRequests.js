@@ -1,7 +1,7 @@
 import { getApiUrl, apiConfig } from '@/config/api'
 import { apiClient } from '@/services/apiClient'
 
-export async function fetchInfrastructures({ signal } = {}) {
+export async function fetchInfrastructures({ signal, tops } = {}) {
   const url = getApiUrl(apiConfig.endpoints.infrastructures)
 
   if (!url) {
@@ -11,7 +11,13 @@ export async function fetchInfrastructures({ signal } = {}) {
     }
   }
 
-  const payload = await apiClient(url, { signal })
+  const requestUrl = new URL(url)
+
+  if (tops !== undefined && tops !== null) {
+    requestUrl.searchParams.set('tops', String(tops))
+  }
+
+  const payload = await apiClient(requestUrl.toString(), { signal })
 
   if (payload?.error) {
     throw new Error('Infrastructure API returned an error response')

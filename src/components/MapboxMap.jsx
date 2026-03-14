@@ -6,6 +6,8 @@ import {
   useState,
 } from 'react'
 
+import { fetchDrivingRoute } from '@/services/requests/routingRequests'
+
 const statusColors = {
   red: '#ef4444',
   green: '#22c55e',
@@ -71,6 +73,22 @@ function buildRoute(startLat, startLng, destLat, destLng) {
   }
 }
 
+function createUserLocationIcon(L) {
+  return L.divIcon({
+    className: '',
+    iconSize: [28, 38],
+    iconAnchor: [14, 38],
+    html: `
+      <div style="width:28px;height:38px;display:flex;align-items:flex-end;justify-content:center;">
+        <svg width="28" height="38" viewBox="0 0 28 38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M14 1.5C7.09644 1.5 1.5 7.09644 1.5 14C1.5 22.6239 12.0612 33.9886 13.2388 35.2336C13.654 35.6725 14.346 35.6725 14.7612 35.2336C15.9388 33.9886 26.5 22.6239 26.5 14C26.5 7.09644 20.9036 1.5 14 1.5Z" fill="#0F7FFF" stroke="white" stroke-width="2"/>
+          <circle cx="14" cy="14" r="4.5" fill="white"/>
+        </svg>
+      </div>
+    `,
+  })
+}
+
 function createInfoRow(label, value) {
   const row = document.createElement('div')
   row.style.display = 'grid'
@@ -100,7 +118,7 @@ function buildPopupNode(point, ui, onBuildRoute) {
   const wrapper = document.createElement('div')
   wrapper.style.display = 'grid'
   wrapper.style.gap = '10px'
-  wrapper.style.minWidth = '220px'
+  wrapper.style.minWidth = '200px'
   wrapper.style.padding = '2px 0'
 
   const title = document.createElement('strong')
@@ -109,29 +127,14 @@ function buildPopupNode(point, ui, onBuildRoute) {
   title.style.lineHeight = '20px'
   title.style.color = '#111827'
 
-  const meta = document.createElement('span')
-  meta.textContent = point.address
-  meta.style.fontSize = '12px'
-  meta.style.lineHeight = '18px'
-  meta.style.color = '#64748b'
-
   const grid = document.createElement('div')
   grid.style.display = 'grid'
   grid.style.gap = '8px'
 
   grid.append(
-    createInfoRow(ui?.descriptionLabel ?? 'Description', point.description),
-    createInfoRow(ui?.addressLabel ?? 'Address', point.address),
     createInfoRow(ui?.statusLabel ?? 'Status', point.statusLabel),
     createInfoRow(ui?.ratingLabel ?? 'Rating', point.rating),
-    createInfoRow(ui?.contractorLabel ?? 'Contractor', point.contractorName),
   )
-
-  if (point.checkItemsCount !== null && point.checkItemsCount !== undefined) {
-    grid.append(
-      createInfoRow(ui?.checkItemsLabel ?? 'Check items', String(point.checkItemsCount)),
-    )
-  }
 
   const button = document.createElement('button')
   button.type = 'button'
@@ -153,7 +156,7 @@ function buildPopupNode(point, ui, onBuildRoute) {
   }
 
   button.addEventListener('click', handleClick)
-  wrapper.append(title, meta, grid, button)
+  wrapper.append(title, grid, button)
 
   return {
     node: wrapper,
@@ -302,6 +305,7 @@ export default function MapboxMap({ map }) {
   const markersLayerRef = useRef(null)
   const routeLayerRef = useRef(null)
   const userMarkerRef = useRef(null)
+  const routeAbortControllerRef = useRef(null)
   const popupCleanupRef = useRef([])
   const [mapError, setMapError] = useState(null)
   const [locationState, setLocationState] = useState({
@@ -365,12 +369,9 @@ export default function MapboxMap({ map }) {
       if (userMarkerRef.current) {
         userMarkerRef.current.setLatLng(userCoordinates)
       } else {
-        userMarkerRef.current = leafletRef.current.circleMarker(userCoordinates, {
-          radius: 8,
-          color: '#ffffff',
-          weight: 3,
-          fillColor: '#0f7fff',
-          fillOpacity: 1,
+        userMarkerRef.current = leafletRef.current.marker(userCoordinates, {
+          icon: createUserLocationIcon(leafletRef.current),
+          zIndexOffset: 1000,
         }).addTo(mapRef.current)
       }
 
@@ -430,12 +431,41 @@ export default function MapboxMap({ map }) {
       return
     }
 
-    const route = buildRoute(
-      userLocation.lat,
-      userLocation.lng,
-      point.latitude,
-      point.longitude,
-    )
+    if (routeAbortControllerRef.current) {
+      routeAbortControllerRef.current.abort()
+    }
+
+    const controller = new AbortController()
+    routeAbortControllerRef.current = controller
+
+    let route = null
+    let usedFallbackRoute = false
+
+    try {
+      route = await fetchDrivingRoute({
+        startLat: userLocation.lat,
+        startLng: userLocation.lng,
+        destLat: point.latitude,
+        destLng: point.longitude,
+        signal: controller.signal,
+      })
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        return
+      }
+
+      route = buildRoute(
+        userLocation.lat,
+        userLocation.lng,
+        point.latitude,
+        point.longitude,
+      )
+      usedFallbackRoute = true
+    } finally {
+      if (routeAbortControllerRef.current === controller) {
+        routeAbortControllerRef.current = null
+      }
+    }
 
     routeLayerRef.current.clearLayers()
 
@@ -452,8 +482,10 @@ export default function MapboxMap({ map }) {
     })
 
     setStatusMessage(
-      map?.ui?.routeReadyLabel ?? 'Route is ready',
-      'success',
+      usedFallbackRoute
+        ? map?.ui?.routeFallbackLabel ?? 'Showing simplified route'
+        : map?.ui?.routeReadyLabel ?? 'Route is ready',
+      usedFallbackRoute ? 'info' : 'success',
       false,
     )
   })
@@ -555,6 +587,11 @@ export default function MapboxMap({ map }) {
       if (userMarkerRef.current) {
         userMarkerRef.current.remove()
         userMarkerRef.current = null
+      }
+
+      if (routeAbortControllerRef.current) {
+        routeAbortControllerRef.current.abort()
+        routeAbortControllerRef.current = null
       }
 
       if (mapRef.current) {
