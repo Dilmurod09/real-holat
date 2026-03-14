@@ -3,6 +3,7 @@ import MapboxMap from '@/components/MapboxMap'
 import FaqSection from '@/components/FaqSection'
 import OrangeBubbleSection from '@/components/OrangeBubbleSection'
 import { getLocalizedHomePageContent } from '@/content/localizedContent'
+import { useInfrastructureData } from '@/hooks/useInfrastructureData'
 import SiteLayout from '@/layouts/SiteLayout'
 
 function StepHeader() {
@@ -35,7 +36,9 @@ const STATUS_TONE_COLORS = {
 }
 
 function ProblemAddressStep({ map }) {
-  const statuses = map?.statuses ?? []
+  const { map: mapData } = useInfrastructureData({ map })
+  const statuses = mapData?.statuses ?? []
+
   return (
     <section className="bg-[#FFFDFB] py-10">
       <div className="section-shell">
@@ -44,7 +47,7 @@ function ProblemAddressStep({ map }) {
         </h2>
         <div className="mt-4 overflow-hidden rounded-[28px] border border-[#F3E2DB] bg-white shadow-[0_20px_40px_rgba(18,28,45,0.06)]">
           <div className="h-[320px] w-full sm:h-[380px] lg:h-[420px]">
-            <MapboxMap map={map} />
+            <MapboxMap map={mapData} />
           </div>
           <div className="flex flex-col gap-4 border-t border-[#F3E2DB] bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <div className="flex flex-wrap gap-3">
@@ -277,4 +280,3 @@ export default function FirstStage({ locale, onLocaleChange, user }) {
     </SiteLayout>
   )
 }
-

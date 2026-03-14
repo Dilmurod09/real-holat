@@ -1,5 +1,6 @@
 import MapboxMap from '@/components/MapboxMap'
 import StatsCardsSection from '@/components/StatsCardsSection'
+import { useInfrastructureData } from '@/hooks/useInfrastructureData'
 
 const statusDotClasses = {
   red: 'bg-red-500',
@@ -23,6 +24,22 @@ export default function RegionInfoSection({
   leaderboard,
   stats,
 }) {
+  const { map: mapData, leaderboard: leaderboardData } = useInfrastructureData({
+    map,
+    leaderboard,
+  })
+  const statuses = mapData?.statuses ?? []
+  const leaderboardRows = leaderboardData?.rows ?? []
+  const isLeaderboardLoading = Boolean(leaderboardData?.isLoading)
+  const hasLeaderboardError = Boolean(leaderboardData?.fetchError)
+  const leaderboardEmptyText =
+    leaderboardData?.ui?.emptyText ?? 'Данные инфраструктуры пока не найдены.'
+  const leaderboardLoadingText =
+    leaderboardData?.ui?.loadingText ?? 'Загружаем инфраструктуру...'
+  const leaderboardErrorText =
+    leaderboardData?.ui?.errorText ??
+    'Не удалось загрузить инфраструктуру. Карта остаётся доступной.'
+
   return (
     <section id={id} className="w-full py-16 md:py-24">
       <div className="section-shell flex flex-col gap-10">
@@ -34,12 +51,12 @@ export default function RegionInfoSection({
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.65fr)_360px]">
           <div
             className="surface-card flex min-h-[360px] flex-col justify-between overflow-hidden bg-[#EEF1F4] p-4 sm:min-h-[420px] sm:p-6"
-            data-api-endpoint={map?.api?.endpoint}
-            data-api-resource={map?.api?.resource}
+            data-api-endpoint={mapData?.api?.endpoint}
+            data-api-resource={mapData?.api?.resource}
           >
-            <MapboxMap map={map} />
+            <MapboxMap map={mapData} />
             <div className="mt-4 grid gap-2 rounded-[20px] bg-white/95 p-3 shadow-sm sm:grid-cols-2 xl:grid-cols-4">
-              {map?.statuses?.map((status) => (
+              {statuses.map((status) => (
                 <div key={status.label} className="flex items-center gap-2 rounded-2xl px-2 py-2">
                   <span
                     className={`inline-block h-3 w-3 rounded-full ${statusDotClasses[status.tone]}`}
@@ -54,18 +71,18 @@ export default function RegionInfoSection({
 
           <div
             className="surface-card overflow-hidden"
-            data-api-endpoint={leaderboard?.api?.endpoint}
-            data-api-resource={leaderboard?.api?.resource}
+            data-api-endpoint={leaderboardData?.api?.endpoint}
+            data-api-resource={leaderboardData?.api?.resource}
           >
             <div className="grid grid-cols-[minmax(0,1fr)_96px_88px] border-b border-[#F2E7E2] bg-white text-xs font-bold uppercase tracking-[0.04em] text-[#1F1F1F]">
-              {leaderboard?.columns?.map((column) => (
+              {leaderboardData?.columns?.map((column) => (
                 <div key={column} className="px-4 py-4">
                   {column}
                 </div>
               ))}
             </div>
             <div>
-              {leaderboard?.rows?.map((row) => (
+              {leaderboardRows.map((row) => (
                 <div
                   key={`${row.name}-${row.status}-${row.rating}`}
                   className="grid grid-cols-[minmax(0,1fr)_96px_88px] border-b border-[#F6EEEA] text-sm last:border-b-0"
@@ -79,9 +96,18 @@ export default function RegionInfoSection({
                   <div className="px-3 py-4 text-center text-[#1F1F1F]">{row.rating}</div>
                 </div>
               ))}
+              {!leaderboardRows.length ? (
+                <div className="px-4 py-6 text-sm leading-6 text-[#66768A]">
+                  {isLeaderboardLoading
+                    ? leaderboardLoadingText
+                    : hasLeaderboardError
+                      ? leaderboardErrorText
+                      : leaderboardEmptyText}
+                </div>
+              ) : null}
             </div>
             <div className="grid gap-3 border-t border-[#F2E7E2] p-4 sm:grid-cols-2">
-              {leaderboard?.actions?.map((action) => (
+              {leaderboardData?.actions?.map((action) => (
                 <a
                   key={action.label}
                   href={action.href}

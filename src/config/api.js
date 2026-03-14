@@ -10,11 +10,22 @@ export const apiConfig = {
     regionMap: import.meta.env.VITE_API_REGION_MAP_ENDPOINT ?? '/regions/map',
     regionProjects:
       import.meta.env.VITE_API_REGION_PROJECTS_ENDPOINT ?? '/regions/projects',
+    infrastructures:
+      import.meta.env.VITE_API_INFRASTRUCTURES_ENDPOINT ??
+      'https://realholat-production.up.railway.app/api/v1/infrastructures',
   },
 }
 
 export function getApiUrl(endpoint) {
-  if (!apiConfig.baseUrl || !endpoint) {
+  if (!endpoint) {
+    return ''
+  }
+
+  if (/^https?:\/\//i.test(endpoint)) {
+    return endpoint
+  }
+
+  if (!apiConfig.baseUrl) {
     return ''
   }
 

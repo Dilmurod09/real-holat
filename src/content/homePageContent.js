@@ -103,7 +103,7 @@ export const HOME_PAGE_CONTENT = {
       view: {
         center: [66.9, 41.2],
         zoom: 5.2,
-        maxZoom: 11,
+        maxZoom: 18,
       },
       points: [
         {
@@ -152,6 +152,31 @@ export const HOME_PAGE_CONTENT = {
           coordinates: [71.6726, 41.0011],
         },
       ],
+      ui: {
+        ratingLabel: 'Рейтинг',
+        descriptionLabel: 'Описание',
+        addressLabel: 'Адрес',
+        statusLabel: 'Статус',
+        contractorLabel: 'Подрядчик',
+        checkItemsLabel: 'Чек-листы',
+        routeButtonLabel: 'Построить маршрут',
+        locationButtonLabel: 'Моё местоположение',
+        locatingButtonLabel: 'Определяем...',
+        locationReadyLabel: 'Местоположение определено',
+        locationErrorLabel: 'Не удалось определить местоположение',
+        routePendingLabel: 'Подготавливаем маршрут...',
+        routeReadyLabel: 'Маршрут готов',
+        routeErrorLabel: 'Не удалось построить маршрут',
+        loadingLabel: 'Загружаем инфраструктуру...',
+        emptyStateLabel: 'Инфраструктура пока не найдена.',
+        apiErrorDescription:
+          'Не удалось загрузить инфраструктуру. Карта продолжает работать без маркеров.',
+        noDataLabel: 'Нет данных',
+        untitledLabel: 'Объект инфраструктуры',
+        loadErrorTitle: 'Не удалось загрузить карту',
+        loadErrorDescription:
+          'Проверьте подключение к интернету и перезагрузите страницу.',
+      },
       statuses: [
         { label: 'В ожидании', tone: 'red' },
         { label: 'Активный', tone: 'green' },
@@ -159,8 +184,8 @@ export const HOME_PAGE_CONTENT = {
         { label: 'Не проверено', tone: 'gray' },
       ],
       api: {
-        resource: 'regionMap',
-        endpoint: '/regions/map',
+        resource: 'infrastructures',
+        endpoint: '/api/v1/infrastructures',
       },
     },
     leaderboard: {
@@ -201,9 +226,14 @@ export const HOME_PAGE_CONTENT = {
         { label: 'Перейти', href: '#' },
         { label: 'Сообщить о проблеме', href: '/first-stage', variant: 'secondary' },
       ],
+      ui: {
+        loadingText: 'Загружаем инфраструктуру...',
+        emptyText: 'Инфраструктурные объекты пока не найдены.',
+        errorText: 'Не удалось загрузить инфраструктуру. Попробуйте обновить страницу.',
+      },
       api: {
-        resource: 'regionProjects',
-        endpoint: '/regions/projects',
+        resource: 'infrastructures',
+        endpoint: '/api/v1/infrastructures',
       },
     },
     stats: {

@@ -187,6 +187,25 @@ const HOME_PAGE_OVERRIDES = {
       map: {
         ui: {
           ratingLabel: 'Рейтинг',
+          descriptionLabel: 'Описание',
+          addressLabel: 'Адрес',
+          statusLabel: 'Статус',
+          contractorLabel: 'Подрядчик',
+          checkItemsLabel: 'Чек-листы',
+          routeButtonLabel: 'Построить маршрут',
+          locationButtonLabel: 'Моё местоположение',
+          locatingButtonLabel: 'Определяем...',
+          locationReadyLabel: 'Местоположение определено',
+          locationErrorLabel: 'Не удалось определить местоположение',
+          routePendingLabel: 'Подготавливаем маршрут...',
+          routeReadyLabel: 'Маршрут готов',
+          routeErrorLabel: 'Не удалось построить маршрут',
+          loadingLabel: 'Загружаем инфраструктуру...',
+          emptyStateLabel: 'Инфраструктура пока не найдена.',
+          apiErrorDescription:
+            'Не удалось загрузить инфраструктуру. Карта продолжает работать без маркеров.',
+          noDataLabel: 'Нет данных',
+          untitledLabel: 'Объект инфраструктуры',
           missingTokenTitle:
             'Интерактивная карта загружается автоматически',
           missingTokenDescription:
@@ -194,6 +213,14 @@ const HOME_PAGE_OVERRIDES = {
           loadErrorTitle: 'Не удалось загрузить карту',
           loadErrorDescription:
             'Проверьте подключение к интернету и перезагрузите страницу. После этого блок перерисуется автоматически.',
+        },
+      },
+      leaderboard: {
+        ui: {
+          loadingText: 'Загружаем инфраструктуру...',
+          emptyText: 'Инфраструктурные объекты пока не найдены.',
+          errorText:
+            'Не удалось загрузить инфраструктуру. Попробуйте обновить страницу.',
         },
       },
     },
@@ -328,6 +355,25 @@ const HOME_PAGE_OVERRIDES = {
         ],
         ui: {
           ratingLabel: 'Reyting',
+          descriptionLabel: 'Tavsif',
+          addressLabel: 'Manzil',
+          statusLabel: 'Holat',
+          contractorLabel: 'Pudratchi',
+          checkItemsLabel: 'Tekshiruv bandlari',
+          routeButtonLabel: 'Marshrut qurish',
+          locationButtonLabel: 'Mening joylashuvim',
+          locatingButtonLabel: 'Aniqlanmoqda...',
+          locationReadyLabel: 'Joylashuv aniqlandi',
+          locationErrorLabel: 'Joylashuvni aniqlab bo‘lmadi',
+          routePendingLabel: 'Marshrut tayyorlanmoqda...',
+          routeReadyLabel: 'Marshrut tayyor',
+          routeErrorLabel: 'Marshrutni qurib bo‘lmadi',
+          loadingLabel: 'Infratuzilma yuklanmoqda...',
+          emptyStateLabel: 'Hozircha infratuzilma topilmadi.',
+          apiErrorDescription:
+            'Infratuzilmani yuklab bo‘lmadi. Xarita markerlarsiz ishlashda davom etadi.',
+          noDataLabel: 'Maʼlumot yo‘q',
+          untitledLabel: 'Infratuzilma obyekti',
           missingTokenTitle:
             'Interaktiv xarita avtomatik yuklanadi',
           missingTokenDescription:
@@ -374,6 +420,12 @@ const HOME_PAGE_OVERRIDES = {
             variant: 'secondary',
           },
         ],
+        ui: {
+          loadingText: 'Infratuzilma yuklanmoqda...',
+          emptyText: 'Hozircha infratuzilma obyektlari topilmadi.',
+          errorText:
+            'Infratuzilmani yuklab bo‘lmadi. Sahifani qayta yuklab ko‘ring.',
+        },
       },
       stats: {
         items: [
@@ -617,6 +669,25 @@ const HOME_PAGE_OVERRIDES = {
         ],
         ui: {
           ratingLabel: 'Rating',
+          descriptionLabel: 'Description',
+          addressLabel: 'Address',
+          statusLabel: 'Status',
+          contractorLabel: 'Contractor',
+          checkItemsLabel: 'Check items',
+          routeButtonLabel: 'Build Route',
+          locationButtonLabel: 'My Location',
+          locatingButtonLabel: 'Locating...',
+          locationReadyLabel: 'Location detected',
+          locationErrorLabel: 'Could not determine your location',
+          routePendingLabel: 'Preparing route...',
+          routeReadyLabel: 'Route is ready',
+          routeErrorLabel: 'Could not build the route',
+          loadingLabel: 'Loading infrastructure...',
+          emptyStateLabel: 'No infrastructure found yet.',
+          apiErrorDescription:
+            'Could not load infrastructure data. The map is still available without markers.',
+          noDataLabel: 'N/A',
+          untitledLabel: 'Infrastructure object',
           missingTokenTitle:
             'The interactive map loads automatically',
           missingTokenDescription:
@@ -663,6 +734,11 @@ const HOME_PAGE_OVERRIDES = {
             variant: 'secondary',
           },
         ],
+        ui: {
+          loadingText: 'Loading infrastructure...',
+          emptyText: 'No infrastructure objects found yet.',
+          errorText: 'Could not load infrastructure. Please reload the page.',
+        },
       },
       stats: {
         items: [
