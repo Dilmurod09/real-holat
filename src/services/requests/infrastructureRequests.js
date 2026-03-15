@@ -30,7 +30,7 @@ function toFiniteNumber(value, fallbackValue = 0) {
   return Number.isFinite(parsedNumber) ? parsedNumber : fallbackValue
 }
 
-export async function fetchInfrastructures({ signal, tops, condition } = {}) {
+export async function fetchInfrastructures({ signal, tops, condition, query } = {}) {
   const url = getApiUrl(apiConfig.endpoints.infrastructures)
 
   if (!url) {
@@ -48,6 +48,10 @@ export async function fetchInfrastructures({ signal, tops, condition } = {}) {
 
   if (condition) {
     requestUrl.searchParams.set('condition', String(condition))
+  }
+
+  if (query) {
+    requestUrl.searchParams.set('query', String(query))
   }
 
   const payload = await apiClient(requestUrl.toString(), { signal })

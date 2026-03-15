@@ -1,6 +1,188 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Menu, Search, X } from 'lucide-react'
+
+import { fetchInfrastructures } from '@/services/requests/infrastructureRequests'
+
+function SearchField({ search, onResultNavigate }) {
+  const navigate = useNavigate()
+  const containerRef = useRef(null)
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    function handlePointerDown(event) {
+      if (!containerRef.current?.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    function handleEscape(event) {
+      if (event.key === 'Escape') {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('touchstart', handlePointerDown)
+    document.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('touchstart', handlePointerDown)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [])
+
+  useEffect(() => {
+    const trimmedQuery = query.trim()
+
+    if (!trimmedQuery) {
+      setResults([])
+      setErrorMessage('')
+      setIsLoading(false)
+      return undefined
+    }
+
+    const controller = new AbortController()
+    const timeoutId = window.setTimeout(async () => {
+      setIsLoading(true)
+      setErrorMessage('')
+
+      try {
+        const { infrastructures } = await fetchInfrastructures({
+          signal: controller.signal,
+          query: trimmedQuery,
+        })
+
+        setResults(infrastructures)
+        setIsOpen(true)
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          return
+        }
+
+        setResults([])
+        setErrorMessage('Не удалось выполнить поиск. Попробуйте еще раз.')
+        setIsOpen(true)
+      } finally {
+        setIsLoading(false)
+      }
+    }, 250)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+      controller.abort()
+    }
+  }, [query])
+
+  function formatSecondaryText(item) {
+    const parts = [
+      item?.infrastructure_type_info?.name,
+      item?.address,
+    ].filter(Boolean)
+
+    return parts.join(' · ')
+  }
+
+  function handleSelectResult(item) {
+    if (!item?.id) {
+      return
+    }
+
+    setQuery(item.name ?? '')
+    setResults([])
+    setIsOpen(false)
+    onResultNavigate?.()
+    navigate(`/schools/${item.id}`)
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault()
+
+    if (results[0]?.id) {
+      handleSelectResult(results[0])
+      return
+    }
+
+    if (query.trim()) {
+      setIsOpen(true)
+    }
+  }
+
+  const showDropdown = isOpen && Boolean(query.trim())
+
+  return (
+    <div ref={containerRef} className="relative w-full md:w-auto">
+      <form
+        className="search-box w-full md:w-auto"
+        data-api-endpoint={search?.api?.endpoint}
+        data-api-resource={search?.api?.resource}
+        onSubmit={handleSubmit}
+      >
+        <input
+          type="search"
+          value={query}
+          placeholder={search?.placeholder ?? 'Поиск'}
+          className="search-input"
+          aria-label={search?.buttonLabel ?? 'Искать'}
+          onChange={(event) => setQuery(event.target.value)}
+          onFocus={() => {
+            if (query.trim()) {
+              setIsOpen(true)
+            }
+          }}
+        />
+        <button
+          type="submit"
+          className="search-btn"
+          aria-label={search?.buttonLabel ?? 'Искать'}
+        >
+          <Search size={18} />
+        </button>
+      </form>
+
+      {showDropdown ? (
+        <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-40 overflow-hidden rounded-[20px] border border-[#F3E2DB] bg-white shadow-[0_24px_60px_rgba(18,28,45,0.12)]">
+          {isLoading ? (
+            <div className="px-4 py-4 text-sm text-[#66768A]">Ищем школы...</div>
+          ) : null}
+
+          {!isLoading && errorMessage ? (
+            <div className="px-4 py-4 text-sm text-[#A24722]">{errorMessage}</div>
+          ) : null}
+
+          {!isLoading && !errorMessage && results.length === 0 ? (
+            <div className="px-4 py-4 text-sm text-[#66768A]">Ничего не найдено.</div>
+          ) : null}
+
+          {!isLoading && !errorMessage && results.length > 0 ? (
+            <div className="max-h-[320px] overflow-y-auto py-2">
+              {results.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className="flex w-full flex-col items-start px-4 py-3 text-left hover:bg-[#FFF6F2]"
+                  onClick={() => handleSelectResult(item)}
+                >
+                  <span className="text-sm font-semibold text-[#1F1F1F]">
+                    {item.name ?? 'Школа'}
+                  </span>
+                  <span className="mt-1 text-xs leading-5 text-[#66768A]">
+                    {formatSecondaryText(item)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  )
+}
 
 export default function Navbar({
   brand,
@@ -90,27 +272,7 @@ export default function Navbar({
   function renderActionLinks(onActionClick) {
     return (
       <>
-        <form
-          className="search-box w-full md:w-auto"
-          data-api-endpoint={search?.api?.endpoint}
-          data-api-resource={search?.api?.resource}
-          onSubmit={(event) => event.preventDefault()}
-        >
-          <input
-            type="search"
-            placeholder={search?.placeholder ?? 'Поиск'}
-            className="search-input"
-            aria-label={search?.buttonLabel ?? 'Искать'}
-          />
-          <button
-            type="submit"
-            className="search-btn"
-            aria-label={search?.buttonLabel ?? 'Искать'}
-          >
-            <Search size={18} />
-          </button>
-        </form>
-
+        <SearchField search={search} onResultNavigate={onActionClick} />
         {renderAuthAction(onActionClick)}
         {localeSwitcher}
       </>
@@ -151,7 +313,9 @@ export default function Navbar({
           onClick={() => setIsMenuOpen((currentState) => !currentState)}
           aria-expanded={isMenuOpen}
           aria-controls="mobile-navigation"
-          aria-label={isMenuOpen ? ui?.closeMenuLabel ?? 'Close menu' : ui?.openMenuLabel ?? 'Open menu'}
+          aria-label={
+            isMenuOpen ? ui?.closeMenuLabel ?? 'Close menu' : ui?.openMenuLabel ?? 'Open menu'
+          }
         >
           {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
