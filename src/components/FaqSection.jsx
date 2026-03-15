@@ -41,7 +41,7 @@ export default function FaqSection({ id, title, items = [], api }) {
                   className={`grid transition-[grid-template-rows] duration-300 ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
                 >
                   <div className="overflow-hidden">
-                    <p className="px-5 pb-5 text-sm leading-7 text-[#4A6174] sm:px-8 sm:pb-6 sm:text-[15px]">
+                    <p className="whitespace-pre-line px-5 pb-5 text-sm leading-7 text-[#4A6174] sm:px-8 sm:pb-6 sm:text-[15px]">
                       {item.answer}
                     </p>
                   </div>

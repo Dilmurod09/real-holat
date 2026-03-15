@@ -92,8 +92,8 @@ function clamp(value, minValue, maxValue) {
 
 function resolveCheckItemStatus(isActive) {
   return isActive
-    ? { label: 'АКТИВНЫЙ', tone: 'green' }
-    : { label: 'НЕАКТИВНЫЙ', tone: 'gray' }
+    ? { label: 'ЗАВЕРШЕНО', tone: 'green' }
+    : { label: 'НЕ ЗАВЕРШЕНО', tone: 'gray' }
 }
 
 function getReportAuthor(report) {

@@ -67,58 +67,36 @@ function MarketplaceShell({ children }) {
   )
 }
 
-function SushiPiece({ className = '' }) {
-  return (
-    <div
-      className={`relative h-[68px] w-[68px] rounded-[22px] bg-white shadow-[0_20px_40px_rgba(113,22,16,0.18)] ${className}`}
-    >
-      <span className="absolute inset-[10px] rounded-[18px] bg-[#F5F5F5]" />
-      <span className="absolute inset-[14px] rounded-[16px] border-[8px] border-[#1E8E54]" />
-      <span className="absolute inset-[24px] rounded-full bg-[#FF8A3D]" />
-    </div>
-  )
-}
-
-function DiscountBadge({ className = '' }) {
-  return (
-    <div
-      className={`flex h-[88px] w-[88px] items-center justify-center rounded-full bg-[#E83224] text-[44px] font-extrabold leading-none text-white shadow-[0_20px_40px_rgba(110,16,12,0.18)] ${className}`}
-    >
-      %
-    </div>
-  )
-}
-
 function MarketplaceBanner() {
   return (
-    <div className="relative overflow-hidden rounded-[28px] bg-[#F12F35] px-6 py-8 sm:px-8 lg:min-h-[320px] lg:px-12 lg:py-10">
-      <div className="grid gap-8 lg:grid-cols-[420px_minmax(0,1fr)] lg:items-center">
-        <div className="relative flex min-h-[220px] items-end justify-center lg:min-h-[240px] lg:justify-start">
+    <div className="relative overflow-hidden rounded-[28px] bg-[#F12F35] px-6 py-6 sm:px-8 sm:py-7 lg:px-12 lg:py-8">
+      <div className="grid gap-5 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-center">
+        <div className="relative flex min-h-[160px] items-end justify-center lg:min-h-[190px] lg:justify-start">
           <img
             src="/mascot3.png"
             alt="Marketplace mascot"
-            className="relative z-10 h-[240px] w-auto object-contain sm:h-[280px] lg:h-[330px]"
+            className="relative z-10 h-[190px] w-auto object-contain sm:h-[220px] lg:h-[250px]"
           />
-          <div className="absolute left-1/2 top-1/2 z-0 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0)_70%)] lg:left-[46%]" />
-          <SushiPiece className="absolute right-6 top-10 z-20 rotate-[14deg]" />
-          <SushiPiece className="absolute left-4 bottom-6 z-20 -rotate-[18deg] scale-[0.88]" />
+          <div className="absolute left-1/2 top-1/2 z-0 h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0)_70%)] lg:left-[44%]" />
         </div>
 
-        <div className="relative z-10 py-2 text-white">
-          <h1 className="max-w-[720px] text-[34px] font-extrabold leading-[1.05] tracking-[-0.04em] sm:text-[44px] lg:text-[56px]">
-            Потратьте молнии с пользой ⚡
-          </h1>
-          <p className="mt-5 max-w-[680px] text-[20px] font-medium leading-[1.3] text-white sm:text-[28px]">
-            Обменивайте накопленные молнии на промокоды и получайте скидки!
-          </p>
+        <div className="relative z-10 py-1 text-white">
+          <img
+            src="/sushi.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute pl-25 right-[-40px] top-1/2 z-0 w-[150px] -translate-y-1/2 opacity-90 sm:right-[-30px] sm:w-[400px] lg:right-[-50px] lg:w-[800px]"          />
+
+          <div className="relative z-10 max-w-[860px] pr-14 sm:pr-28 lg:pr-44">
+            <h1 className="pl-15 max-w-[800px] text-[30px] font-extrabold leading-[1.05] tracking-[-0.04em] sm:text-[38px] lg:text-[48px] sl:text-[100px]">
+              Потратьте молнии с пользой ⚡
+            </h1>
+            <p className="pl-15 mt-3 max-w-[620px] text-[18px] font-medium leading-[1.3] text-white sm:text-[22px]">
+              Обменивайте накопленные молнии на промокоды и получайте скидки!
+            </p>
+          </div>
         </div>
       </div>
-
-      <DiscountBadge className="absolute right-[48px] top-[18px] hidden lg:flex" />
-      <DiscountBadge className="absolute right-[280px] bottom-[-10px] hidden lg:flex scale-[0.8]" />
-      <SushiPiece className="absolute right-[120px] top-[110px] hidden rotate-[32deg] lg:block" />
-      <SushiPiece className="absolute right-[22px] bottom-[30px] hidden -rotate-[18deg] scale-[1.05] lg:block" />
-      <SushiPiece className="absolute right-[128px] bottom-[8px] hidden rotate-[10deg] scale-[0.92] lg:block" />
     </div>
   )
 }
