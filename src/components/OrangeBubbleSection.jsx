@@ -136,7 +136,7 @@ export default function OrangeBubbleSection({
                         }`}
                       >
                         <span>{topBubble?.cta?.label}</span>
-                        <span className="text-[16px] leading-none sm:text-[18px] xl:text-[20px]">
+                        <span className="text-[13px] leading-none sm:text-[18px] xl:text-[20px]">
                           &raquo;
                         </span>
                       </a>
