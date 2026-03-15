@@ -56,7 +56,7 @@ function StepCard({ card, defaultIllustration }) {
 
           <a
             href={card.cta?.href}
-            className="mt-3 inline-flex h-[32px] w-full max-w-[228px] items-center justify-center rounded-[6px] bg-white px-5 text-[14px] font-normal text-[#2b2b2b]"
+            className="mt-auto inline-flex h-[32px] w-full max-w-[228px] items-center justify-center rounded-[6px] bg-white px-5 text-center text-[14px] leading-tight font-normal text-[#2b2b2b]"
           >
             {card.cta?.label}
           </a>

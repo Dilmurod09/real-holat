@@ -5,7 +5,7 @@ function renderStatIcon(icon, tone) {
 
   if (icon === 'participants') {
     return (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <svg width="48" height="48" viewBox="8 8 32 32" fill="none" aria-hidden="true">
         <rect
           x="8"
           y="8"
@@ -25,7 +25,7 @@ function renderStatIcon(icon, tone) {
 
   if (icon === 'completed') {
     return (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <svg width="48" height="48" viewBox="8 8 32 32" fill="none" aria-hidden="true">
         <rect
           x="8"
           y="8"
@@ -53,7 +53,7 @@ function renderStatIcon(icon, tone) {
   }
 
   return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+    <svg width="48" height="48" viewBox="8 8 32 32" fill="none" aria-hidden="true">
       <rect
         x="8"
         y="8"

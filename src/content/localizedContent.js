@@ -242,7 +242,7 @@ const HOME_PAGE_OVERRIDES = {
     hero: {
       title: 'Har qanday muammo haqida xabar bering va davlat organlaridan javob oling',
       description:
-        '“Feedback.uz Birga hal qilamiz” ilovasi muammolarni yechishga yordam beradi. Shikoyat yuboring, savol bering, taklif kiriting, so‘rov va ovoz berishlarda qatnashing, shunda yashash sifati yaxshilanadi. Bu qulay va tez.',
+        '“Realholat.uz” ilovasi muammolarni yechishga yordam beradi. Shikoyat yuboring, savol bering, taklif kiriting, so‘rov va ovoz berishlarda qatnashing, shunda yashash sifati yaxshilanadi. Bu qulay va tez.',
       primaryAction: {
         label: 'Muammo haqida xabar berish',
       },
@@ -439,7 +439,7 @@ const HOME_PAGE_OVERRIDES = {
           {
             icon: 'participants',
             value: '0',
-            label: 'jami murojaatlar',
+            label: 'jami foydalanuvchilar',
             tone: 'light',
           },
           {
@@ -451,7 +451,7 @@ const HOME_PAGE_OVERRIDES = {
           {
             icon: 'active',
             value: '0',
-            label: 'ishtirok etgan foydalanuvchilar',
+            label: 'jami murojaatlar',
             tone: 'light',
           },
         ],
@@ -519,7 +519,7 @@ const HOME_PAGE_OVERRIDES = {
     hero: {
       title: 'Report any issue and get a response from public authorities',
       description:
-        '“Feedback.uz We solve it together” is an app for resolving everyday issues. Submit complaints, ask questions, send proposals, and take part in polls and discussions to improve quality of life. It is simple and fast.',
+        '“Realholat.uz” is an app for resolving everyday issues. Submit complaints, ask questions, send proposals, and take part in polls and discussions to improve quality of life. It is simple and fast.',
       primaryAction: {
         label: 'Report an issue',
       },
@@ -715,7 +715,7 @@ const HOME_PAGE_OVERRIDES = {
           {
             icon: 'participants',
             value: '0',
-            label: 'total reports',
+            label: 'total users',
             tone: 'light',
           },
           {
@@ -727,7 +727,7 @@ const HOME_PAGE_OVERRIDES = {
           {
             icon: 'active',
             value: '0',
-            label: 'participated users',
+            label: 'total reports',
             tone: 'light',
           },
         ],
