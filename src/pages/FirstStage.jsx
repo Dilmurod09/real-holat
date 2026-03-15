@@ -3,7 +3,6 @@ import { X } from 'lucide-react'
 
 import MapboxMap from '@/components/MapboxMap'
 import FaqSection from '@/components/FaqSection'
-import OrangeBubbleSection from '@/components/OrangeBubbleSection'
 import { getLocalizedHomePageContent } from '@/content/localizedContent'
 import { useInfrastructureData } from '@/hooks/useInfrastructureData'
 import SiteLayout from '@/layouts/SiteLayout'
@@ -17,7 +16,12 @@ function StepHeader() {
     <section className="border-b border-[#FFD9C7] bg-white">
       <div className="section-shell py-8">
         <div className="flex flex-col items-center gap-6">
-          <div className="h-[88px] w-full max-w-[720px] bg-[url('/first-stage-header.svg')] bg-contain bg-center bg-no-repeat" />
+          <img
+            src="/houses.png"
+            alt=""
+            aria-hidden="true"
+            className="w-full max-w-[720px] object-contain"
+          />
           <div className="text-center">
             <h1 className="text-[26px] font-extrabold leading-tight tracking-[-0.03em] text-[#1F1F1F] sm:text-[30px]">
               Выявление проблемы
@@ -532,10 +536,10 @@ function SuccessRewardModal({ reward, onClose }) {
         <div className="grid items-center gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)]">
           <div className="text-center lg:text-left">
             <h3 className="text-[34px] font-extrabold leading-tight tracking-[-0.03em] sm:text-[42px]">
-              🎉 Ура! Вы получили {reward.givenCoins} монет!
+              🎉 Ура! Вы получили {reward.givenCoins} молний!
             </h3>
             <p className="mt-6 text-[24px] font-semibold leading-tight sm:text-[30px]">
-              Теперь у вас {reward.totalCoins} монет.
+              Теперь у вас {reward.totalCoins} молний.
             </p>
             <p className="mt-3 text-lg font-medium text-white/90 sm:text-xl">
               Спасибо за ваш вклад!
@@ -807,7 +811,7 @@ export default function FirstStage({
         isUploadingFiles={isUploadingFiles}
         submitError={submitError}
       />
-      <OrangeBubbleSection {...orangeBubble} />
+
       <FaqSection {...faq} />
       <SuccessRewardModal reward={reward} onClose={() => setReward(null)} />
     </SiteLayout>

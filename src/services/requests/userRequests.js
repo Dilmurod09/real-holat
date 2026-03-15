@@ -13,15 +13,19 @@ function buildUserProfileUrl(userId) {
   return new URL(encodeURIComponent(userId), normalizedBaseUrl).toString()
 }
 
-export async function fetchUserProfile({ userId, signal } = {}) {
+export async function fetchUserProfile({ userId, signal, errorMessages } = {}) {
   if (!userId) {
-    throw new Error('User id is required')
+    throw new Error(errorMessages?.missingUserId || 'User id is required')
   }
 
   const payload = await apiClient(buildUserProfileUrl(userId), { signal })
 
   if (payload?.error) {
-    throw new Error(payload.message || 'Не удалось загрузить профиль пользователя.')
+    throw new Error(
+      payload.message ||
+        errorMessages?.loadFailed ||
+        'Could not load the user profile.',
+    )
   }
 
   return payload?.data ?? payload

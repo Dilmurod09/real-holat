@@ -242,7 +242,7 @@ const HOME_PAGE_OVERRIDES = {
     hero: {
       title: 'Har qanday muammo haqida xabar bering va davlat organlaridan javob oling',
       description:
-        '“Feedback.uz Birga hal qilamiz” ilovasi muammolarni yechishga yordam beradi. Shikoyat yuboring, savol bering, taklif kiriting, so‘rov va ovoz berishlarda qatnashing, shunda yashash sifati yaxshilanadi. Bu qulay va tez.',
+        '“Realholat.uz Birga hal qilamiz” ilovasi muammolarni yechishga yordam beradi. Shikoyat yuboring, savol bering, taklif kiriting, so‘rov va ovoz berishlarda qatnashing, shunda yashash sifati yaxshilanadi. Bu qulay va tez.',
       primaryAction: {
         label: 'Muammo haqida xabar berish',
       },
@@ -322,7 +322,7 @@ const HOME_PAGE_OVERRIDES = {
             title: 'Hojatxonalarni taʼmirlash',
             region: 'Mirobod tumani, Toshkent',
             rating: '4.5',
-            statusLabel: 'Faol',
+            statusLabel: 'Yakunlangan',
           },
           {
             id: 'project-2',
@@ -343,7 +343,7 @@ const HOME_PAGE_OVERRIDES = {
             title: 'Yangi sport maydonchasi',
             region: 'Buxoro',
             rating: '4.8',
-            statusLabel: 'Faol',
+            statusLabel: 'Yakunlangan',
           },
           {
             id: 'project-5',
@@ -355,7 +355,7 @@ const HOME_PAGE_OVERRIDES = {
         ],
         statuses: [
           { label: 'Kutilmoqda', tone: 'red' },
-          { label: 'Faol', tone: 'green' },
+          { label: 'Yakunlangan', tone: 'green' },
           { label: 'Jarayonda', tone: 'yellow' },
           { label: 'Tekshirilmagan', tone: 'gray' },
         ],
@@ -395,7 +395,7 @@ const HOME_PAGE_OVERRIDES = {
         rows: [
           {
             name: 'Hojatxonalarni taʼmirlash',
-            status: 'Faol',
+            status: 'Yakunlangan',
             rating: '4.5',
           },
           {
@@ -410,7 +410,7 @@ const HOME_PAGE_OVERRIDES = {
           },
           {
             name: 'Yangi sport maydonchasi',
-            status: 'Faol',
+            status: 'Yakunlangan',
             rating: '4.8',
           },
           {
@@ -519,7 +519,7 @@ const HOME_PAGE_OVERRIDES = {
     hero: {
       title: 'Report any issue and get a response from public authorities',
       description:
-        '“Feedback.uz We solve it together” is an app for resolving everyday issues. Submit complaints, ask questions, send proposals, and take part in polls and discussions to improve quality of life. It is simple and fast.',
+        '“Realholat.uz We solve it together” is an app for resolving everyday issues. Submit complaints, ask questions, send proposals, and take part in polls and discussions to improve quality of life. It is simple and fast.',
       primaryAction: {
         label: 'Report an issue',
       },
@@ -599,7 +599,7 @@ const HOME_PAGE_OVERRIDES = {
             title: 'Restroom renovation',
             region: 'Mirabad district, Tashkent',
             rating: '4.5',
-            statusLabel: 'Active',
+            statusLabel: 'Completed',
           },
           {
             id: 'project-2',
@@ -620,7 +620,7 @@ const HOME_PAGE_OVERRIDES = {
             title: 'New sports ground',
             region: 'Bukhara',
             rating: '4.8',
-            statusLabel: 'Active',
+            statusLabel: 'Completed',
           },
           {
             id: 'project-5',
@@ -632,7 +632,7 @@ const HOME_PAGE_OVERRIDES = {
         ],
         statuses: [
           { label: 'Pending', tone: 'red' },
-          { label: 'Active', tone: 'green' },
+          { label: 'Completed', tone: 'green' },
           { label: 'In progress', tone: 'yellow' },
           { label: 'Not verified', tone: 'gray' },
         ],
@@ -672,7 +672,7 @@ const HOME_PAGE_OVERRIDES = {
         rows: [
           {
             name: 'Restroom renovation',
-            status: 'Active',
+            status: 'Completed',
             rating: '4.5',
           },
           {
@@ -687,7 +687,7 @@ const HOME_PAGE_OVERRIDES = {
           },
           {
             name: 'New sports ground',
-            status: 'Active',
+            status: 'Completed',
             rating: '4.8',
           },
           {

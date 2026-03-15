@@ -24,9 +24,9 @@ export function getSchoolById(schoolId) {
       tasksTable: {
         columns: ['ЗАДАЧА', 'ПЕРИОД', 'СТАТУС', 'ОТВЕТСТВ', 'ДЕЙСТВИЯ'],
         rows: [
-          { task: 'РЕКОНСТРУКЦИЯ', period: '12.03.2023-9.11.2024', status: 'АКТИВНЫЙ', statusTone: 'green', responsible: 'ТАЙМЕНТ', actions: 'Д/С' },
+          { task: 'РЕКОНСТРУКЦИЯ', period: '12.03.2023-9.11.2024', status: 'ЗАВЕРШЕНО', statusTone: 'green', responsible: 'ТАЙМЕНТ', actions: 'Д/С' },
           { task: 'РЕМОНТ', period: '01.02.2024-15.06.2024', status: 'НЕ ПРОВЕРЕНО', statusTone: 'gray', responsible: 'ТАЛЕНТ', actions: '4.0' },
-          { task: 'РЕМОНТ', period: '10.01.2024-30.05.2024', status: 'ЗАВЕРШЕННЫЙ', statusTone: 'green', responsible: 'ТАЛЕНТ', actions: '4.0' },
+          { task: 'РЕМОНТ', period: '10.01.2024-30.05.2024', status: 'ЗАВЕРШЕНО', statusTone: 'green', responsible: 'ТАЛЕНТ', actions: '4.0' },
         ],
       },
       complaints: [
@@ -35,7 +35,7 @@ export function getSchoolById(schoolId) {
         { author: 'Hoodieburg', avatar: null, rating: 4, text: 'Проблему рассмотрит профильный орган власти или администрация учреждения. Без ответа оно не останется — ведомство обязано дать ответ в течение 30 дней. Некоторые проблемы решаются быстрее в срок до 10 дней.', image: '/hero-image.png', imageAlt: 'Фото' },
       ],
     },
-    2: { id: '2', name: 'Школа 12', region: 'Юнусабад, Ташкент', image: '/hero-image.png', imageAlt: 'Школа 12', stats: [{ icon: 'participants', value: '120 000', label: 'Участников', tone: 'light' }, { icon: 'completed', value: '45 000', label: 'Записи (Отчеты)', tone: 'brand' }, { icon: 'active', value: '80 000', label: 'Просмотров', tone: 'light' }, { icon: 'active', value: '4.3', label: 'Рейтинг', tone: 'light' }], tasksTable: { columns: ['ЗАДАЧА', 'ПЕРИОД', 'СТАТУС', 'ОТВЕТСТВ', 'ДЕЙСТВИЯ'], rows: [{ task: 'РЕМОНТ', period: '01.01.2024-01.06.2024', status: 'ЗАВЕРШЕННЫЙ', statusTone: 'green', responsible: 'ТАЛЕНТ', actions: '4.3' }] }, complaints: [] },
+    2: { id: '2', name: 'Школа 12', region: 'Юнусабад, Ташкент', image: '/hero-image.png', imageAlt: 'Школа 12', stats: [{ icon: 'participants', value: '120 000', label: 'Участников', tone: 'light' }, { icon: 'completed', value: '45 000', label: 'Записи (Отчеты)', tone: 'brand' }, { icon: 'active', value: '80 000', label: 'Просмотров', tone: 'light' }, { icon: 'active', value: '4.3', label: 'Рейтинг', tone: 'light' }], tasksTable: { columns: ['ЗАДАЧА', 'ПЕРИОД', 'СТАТУС', 'ОТВЕТСТВ', 'ДЕЙСТВИЯ'], rows: [{ task: 'РЕМОНТ', period: '01.01.2024-01.06.2024', status: 'ЗАВЕРШЕНО', statusTone: 'green', responsible: 'ТАЛЕНТ', actions: '4.3' }] }, complaints: [] },
   }
   return schools[id] || schools[1]
 }

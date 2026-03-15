@@ -2,93 +2,11 @@ import { startTransition, useEffect, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
+import { getProfileContent } from '@/content/profileContent'
 import { getLocalizedSiteChromeContent } from '@/content/localizedContent'
 import SiteLayout from '@/layouts/SiteLayout'
 import { clearStoredAuthSession } from '@/services/authStorage'
 import { fetchUserProfile } from '@/services/requests/userRequests'
-
-const FALLBACK_LEVELS = [
-  { id: 'intern', label: 'Стажер', image: '/mascot2.png' },
-  { id: 'junior', label: 'Младший инспектор', image: '/mascot3.png' },
-  { id: 'revisor', label: 'Ревизор', image: '/mascot.png' },
-  { id: 'senior', label: 'Старший инспектор', image: '/mascot4.png' },
-  { id: 'expert', label: 'Эксперт', image: '/mascot3.png' },
-  { id: 'master', label: 'Мастер Ревизии', image: '/mascot2.png' },
-]
-
-const FALLBACK_ACTIVITY_ROWS = [
-  {
-    activity: 'ПОДТВЕРДИЛ КОММЕНТАРИЙ',
-    topic: 'ШКОЛА 45',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '2',
-    lightning: '+15',
-    isHighlighted: true,
-  },
-  {
-    activity: 'ОСТАВИЛ ЖАЛОБУ',
-    topic: 'ШКОЛА 45',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '5',
-    lightning: '+15',
-  },
-  {
-    activity: 'ОСТАВИЛ ЖАЛОБУ',
-    topic: 'ШКОЛА 45',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '10',
-    lightning: '+15',
-  },
-  {
-    activity: 'ОСТАВИЛ ЖАЛОБУ',
-    topic: 'ТАШКЕНТ',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '5',
-    lightning: '+15',
-  },
-  {
-    activity: 'ОСТАВИЛ ЖАЛОБУ',
-    topic: 'ТАШКЕНТ',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '5',
-    lightning: '+15',
-  },
-  {
-    activity: 'ОСТАВИЛ ЖАЛОБУ',
-    topic: 'ТАШКЕНТ',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '5',
-    lightning: '+10',
-  },
-  {
-    activity: 'ОСТАВИЛ ЖАЛОБУ',
-    topic: 'ТАШКЕНТ',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '5',
-    lightning: '+10',
-  },
-  {
-    activity: 'ОСТАВИЛ ЖАЛОБУ',
-    topic: 'ТАШКЕНТ',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '5',
-    lightning: '+10',
-  },
-  {
-    activity: 'ПОДТВЕРДИЛ КОММЕНТАРИЙ',
-    topic: 'ТАШКЕНТ',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '4',
-    lightning: '+10',
-  },
-  {
-    activity: 'ПОДТВЕРДИЛ КОММЕНТАРИЙ',
-    topic: 'ТАШКЕНТ',
-    date: '12.03.2025-11.12.2026',
-    confirmed: '2',
-    lightning: '+10',
-  },
-]
 
 function createInitialProfileState() {
   return {
@@ -178,22 +96,44 @@ function clamp(value, minValue, maxValue) {
   return Math.min(Math.max(value, minValue), maxValue)
 }
 
-function resolveProfilePresentation(profile) {
+function resolveFallbackLevel(levels, levelId, index) {
+  return (
+    levels.find((level) => level.id === levelId) ??
+    levels[index % levels.length] ??
+    levels[0] ??
+    { id: `level-${index}`, label: 'Level', image: '/mascot.png' }
+  )
+}
+
+function resolveProfilePresentation(profile, content) {
+  const fallbackLevels = content.levels
   const baseLevels =
-    Array.isArray(profile?.levels) && profile.levels.length ? profile.levels : FALLBACK_LEVELS
-  const levels = baseLevels.map((level, index) => ({
-    id: level?.id ?? FALLBACK_LEVELS[index % FALLBACK_LEVELS.length]?.id ?? `level-${index}`,
-    label: formatProfileValue(
-      level?.label ?? level?.name,
-      FALLBACK_LEVELS[index % FALLBACK_LEVELS.length]?.label ?? 'Уровень',
-    ),
-    image:
-      level?.image ??
-      level?.icon ??
-      level?.image_url ??
-      FALLBACK_LEVELS[index % FALLBACK_LEVELS.length]?.image ??
-      '/mascot.png',
-  }))
+    Array.isArray(profile?.levels) && profile.levels.length
+      ? profile.levels
+      : fallbackLevels
+
+  const levels = baseLevels.map((level, index) => {
+    const fallbackLevel = resolveFallbackLevel(
+      fallbackLevels,
+      level?.id ?? level?.code,
+      index,
+    )
+
+    return {
+      id: level?.id ?? fallbackLevel.id ?? `level-${index}`,
+      label: formatProfileValue(
+        fallbackLevel?.label ?? level?.label ?? level?.name,
+        fallbackLevel?.label ?? content.hero.levelLabel,
+      ),
+      image:
+        level?.image ??
+        level?.icon ??
+        level?.image_url ??
+        fallbackLevel?.image ??
+        '/mascot.png',
+    }
+  })
+
   const activeLevelIndex = clamp(
     toFiniteNumber(
       profile?.current_level_index ?? profile?.level_index ?? profile?.current_level - 1,
@@ -202,11 +142,18 @@ function resolveProfilePresentation(profile) {
     0,
     levels.length - 1,
   )
-  const currentLevelLabel =
-    formatProfileValue(
-      profile?.level_name ?? profile?.current_level_name,
-      levels[activeLevelIndex]?.label ?? 'Ревизор',
-    )
+
+  const currentLevelFallback = resolveFallbackLevel(
+    fallbackLevels,
+    profile?.level_id ?? profile?.current_level_id ?? levels[activeLevelIndex]?.id,
+    activeLevelIndex,
+  )
+
+  const currentLevelLabel = formatProfileValue(
+    currentLevelFallback?.label ?? profile?.level_name ?? profile?.current_level_name,
+    levels[activeLevelIndex]?.label ?? currentLevelFallback?.label ?? content.hero.levelLabel,
+  )
+
   const currentExperience = toFiniteNumber(
     profile?.experience_current ?? profile?.xp_current,
     480,
@@ -232,7 +179,7 @@ function resolveProfilePresentation(profile) {
   }
 }
 
-function normalizeActivityRows(profile, locale) {
+function normalizeActivityRows(profile, locale, content) {
   const apiRows = Array.isArray(profile?.activity_history)
     ? profile.activity_history
     : Array.isArray(profile?.activityHistory)
@@ -240,7 +187,7 @@ function normalizeActivityRows(profile, locale) {
       : []
 
   if (!apiRows.length) {
-    return FALLBACK_ACTIVITY_ROWS
+    return content.activity.fallbackRows
   }
 
   return apiRows.map((item, index) => ({
@@ -283,14 +230,14 @@ function ProfileLoadingSkeleton() {
   )
 }
 
-function ProfileErrorState({ message }) {
+function ProfileErrorState({ message, content }) {
   return (
     <ProfileShell>
       <div className="surface-card px-6 py-8 sm:px-8">
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#FF622E]">
-          User Cabinet
+          {content.error.eyebrow}
         </p>
-        <h1 className="section-title mt-3">Личный кабинет</h1>
+        <h1 className="section-title mt-3">{content.error.title}</h1>
         <div className="mt-6 rounded-[24px] border border-[#FFD2C2] bg-[#FFF4EE] px-5 py-4 text-sm font-medium text-[#A24722]">
           {message}
         </div>
@@ -299,8 +246,8 @@ function ProfileErrorState({ message }) {
   )
 }
 
-function ProfileHeroSection({ profile, locale }) {
-  const presentation = resolveProfilePresentation(profile)
+function ProfileHeroSection({ profile, locale, content }) {
+  const presentation = resolveProfilePresentation(profile, content)
 
   return (
     <div className="surface-card min-h-[332px] overflow-hidden px-6 py-8 sm:px-8 lg:px-12 lg:py-12">
@@ -316,25 +263,38 @@ function ProfileHeroSection({ profile, locale }) {
 
           <div className="flex-1">
             <span className="inline-flex h-[46px] items-center rounded-[14px] bg-[#FF622E] px-8 text-sm font-semibold text-white">
-              Активный
+              {content.hero.badge}
             </span>
             <h2 className="mt-7 text-[30px] font-extrabold tracking-[-0.04em] text-[#101828] sm:text-[36px]">
               {presentation.currentLevelLabel}
             </h2>
             <p className="mt-2 text-base text-[#4A6174]">
-              Уровень {presentation.currentLevelNumber} из {presentation.levels.length}
+              {content.hero.levelLabel} {presentation.currentLevelNumber} {content.hero.ofLabel}{' '}
+              {presentation.levels.length}
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-[#8B97A5]">
-              <span>Username: {formatProfileValue(profile?.tg_user_name)}</span>
-              <span>Молнии: {formatNumber(profile?.coins, locale)}</span>
+              <span>
+                {content.hero.usernameLabel}:{' '}
+                {formatProfileValue(profile?.tg_user_name ?? profile?.username)}
+              </span>
+              <span>
+                {content.hero.lightningsLabel}:{' '}
+                {formatNumber(profile?.coins ?? profile?.lightning ?? profile?.points, locale)}
+              </span>
             </div>
           </div>
         </div>
 
         <div className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm font-semibold text-[#3E4C59]">
-            <span>Опыт {formatNumber(presentation.currentExperience, locale)} молний</span>
-            <span>Опыт {formatNumber(presentation.nextExperience, locale)} молний</span>
+            <span>
+              {content.hero.experienceLabel}{' '}
+              {formatNumber(presentation.currentExperience, locale)} {content.hero.lightningsUnit}
+            </span>
+            <span>
+              {content.hero.experienceLabel} {formatNumber(presentation.nextExperience, locale)}{' '}
+              {content.hero.lightningsUnit}
+            </span>
           </div>
 
           <div className="h-[32px] overflow-hidden rounded-[10px] border border-[#FFB597] bg-white">
@@ -368,13 +328,19 @@ function ProfileHeroSection({ profile, locale }) {
   )
 }
 
-function PersonalInfoCard({ profile, onLogout }) {
-  const { firstName, lastName } = splitFullName(profile?.full_name)
+function PersonalInfoCard({ profile, onLogout, content }) {
+  const { firstName, lastName } = splitFullName(profile?.full_name ?? profile?.fullName)
   const rows = [
-    { label: 'Фамилия', value: lastName },
-    { label: 'Имя', value: firstName },
-    { label: 'Username', value: formatProfileValue(profile?.tg_user_name) },
-    { label: 'Номер телефона', value: formatProfileValue(profile?.phone_number) },
+    { label: content.personalInfo.surnameLabel, value: lastName },
+    { label: content.personalInfo.nameLabel, value: firstName },
+    {
+      label: content.personalInfo.usernameLabel,
+      value: formatProfileValue(profile?.tg_user_name ?? profile?.username),
+    },
+    {
+      label: content.personalInfo.phoneLabel,
+      value: formatProfileValue(profile?.phone_number ?? profile?.phone),
+    },
   ]
 
   return (
@@ -395,7 +361,7 @@ function PersonalInfoCard({ profile, onLogout }) {
           type="button"
           className="inline-flex h-[52px] w-[212px] items-center justify-center gap-3 rounded-[12px] border border-[#FF8E69] bg-white text-sm font-semibold text-[#FF622E] hover:bg-[#FFF5F1]"
         >
-          Confirm
+          {content.personalInfo.confirmLabel}
           <ArrowRight size={16} />
         </button>
 
@@ -404,24 +370,18 @@ function PersonalInfoCard({ profile, onLogout }) {
           onClick={onLogout}
           className="inline-flex h-[52px] w-[212px] items-center justify-center rounded-[12px] border border-[#E7B8A7] bg-[#FFF4EE] text-sm font-semibold text-[#A24722] hover:bg-[#FFE9E0]"
         >
-          Выйти
+          {content.personalInfo.logoutLabel}
         </button>
       </div>
     </div>
   )
 }
 
-function FeaturesCard({ profile, locale }) {
-  const actionLabels = [
-    'Отметить проблему на карте',
-    'Создавать коллективные обращения',
-    'Значок "Проверено"',
-  ]
-
+function FeaturesCard({ profile, locale, content }) {
   return (
     <div className="surface-card flex min-h-[580px] flex-col px-6 py-8 sm:px-8 lg:px-12 lg:py-12">
       <h2 className="text-[24px] font-semibold tracking-[-0.03em] text-[#8B97A5]">
-        Доступные возможности
+        {content.features.title}
       </h2>
 
       <div className="relative mt-5 overflow-hidden rounded-[20px] bg-[linear-gradient(135deg,#FFA158_0%,#F8B25C_100%)] px-6 py-6">
@@ -436,15 +396,19 @@ function FeaturesCard({ profile, locale }) {
           <div className="flex items-end gap-4">
             <img
               src="/mascot3.png"
-              alt="Lightning mascot"
+              alt={content.features.mascotAlt}
               className="h-[140px] w-[140px] shrink-0 object-contain"
             />
             <div className="pb-3 text-white">
               <p className="text-[34px] font-extrabold leading-none sm:text-[42px]">
-                {formatNumber(profile?.coins ?? 265780, locale, '265 780')}
+                {formatNumber(
+                  profile?.coins ?? profile?.lightning ?? profile?.points ?? 265780,
+                  locale,
+                  '265 780',
+                )}
               </p>
               <p className="mt-3 text-sm font-medium text-white/90 sm:text-base">
-                Текущий баланс молний
+                {content.features.currentBalanceLabel}
               </p>
             </div>
           </div>
@@ -453,14 +417,14 @@ function FeaturesCard({ profile, locale }) {
             to="/lightning-marketplace"
             className="inline-flex h-[52px] items-center justify-center gap-3 rounded-[12px] bg-white px-6 text-sm font-semibold text-[#FF622E] shadow-[0_12px_24px_rgba(116,66,22,0.14)] hover:bg-[#FFF6F2]"
           >
-            Обменять молнии
+            {content.features.exchangeLabel}
             <ArrowRight size={16} />
           </Link>
         </div>
       </div>
 
       <div className="mt-8 flex flex-1 flex-col gap-4">
-        {actionLabels.map((actionLabel) => (
+        {content.features.actions.map((actionLabel) => (
           <button
             key={actionLabel}
             type="button"
@@ -475,8 +439,8 @@ function FeaturesCard({ profile, locale }) {
   )
 }
 
-function LevelPathSection({ profile }) {
-  const presentation = resolveProfilePresentation(profile)
+function LevelPathSection({ profile, content }) {
+  const presentation = resolveProfilePresentation(profile, content)
 
   return (
     <div className="px-2 py-8 sm:px-4">
@@ -537,9 +501,8 @@ function LevelPathSection({ profile }) {
   )
 }
 
-function ActivityHistoryTable({ profile, locale }) {
-  const rows = normalizeActivityRows(profile, locale)
-  const headers = ['АКТИВНОСТЬ', 'ТЕМА', 'ДАТА', 'ПОДТВЕРЖДЕНО', 'МОЛНИИ']
+function ActivityHistoryTable({ profile, locale, content }) {
+  const rows = normalizeActivityRows(profile, locale, content)
 
   return (
     <div className="surface-card min-h-[520px] overflow-hidden px-6 py-8 sm:px-8 lg:px-6 lg:py-10">
@@ -547,7 +510,7 @@ function ActivityHistoryTable({ profile, locale }) {
         <table className="min-w-full border-separate border-spacing-0 overflow-hidden rounded-[18px]">
           <thead>
             <tr className="bg-white text-left text-xs font-bold uppercase tracking-[0.08em] text-[#4A6174]">
-              {headers.map((header) => (
+              {content.activity.headers.map((header) => (
                 <th
                   key={header}
                   className="border-b border-[#EEF2F7] px-3 py-3 lg:px-4 lg:py-3"
@@ -597,6 +560,7 @@ function ActivityHistoryTable({ profile, locale }) {
 
 export default function Profile({ locale, onLocaleChange, user, onLoginSuccess }) {
   const site = getLocalizedSiteChromeContent(locale)
+  const profileContent = getProfileContent(locale)
   const { id } = useParams()
   const navigate = useNavigate()
   const [state, setState] = useState(() => createInitialProfileState())
@@ -608,11 +572,29 @@ export default function Profile({ locale, onLocaleChange, user, onLoginSuccess }
       setState(createInitialProfileState())
     })
 
+    if (!id) {
+      startTransition(() => {
+        setState({
+          profile: null,
+          errorMessage: profileContent.error.missingUserId,
+          isLoading: false,
+        })
+      })
+
+      return () => {
+        controller.abort()
+      }
+    }
+
     async function loadProfile() {
       try {
         const profile = await fetchUserProfile({
           userId: id,
           signal: controller.signal,
+          errorMessages: {
+            missingUserId: profileContent.error.missingUserId,
+            loadFailed: profileContent.error.loadFailed,
+          },
         })
 
         startTransition(() => {
@@ -630,7 +612,7 @@ export default function Profile({ locale, onLocaleChange, user, onLoginSuccess }
         startTransition(() => {
           setState({
             profile: null,
-            errorMessage: error.message || 'Не удалось загрузить профиль.',
+            errorMessage: error.message || profileContent.error.loadFailed,
             isLoading: false,
           })
         })
@@ -642,7 +624,7 @@ export default function Profile({ locale, onLocaleChange, user, onLoginSuccess }
     return () => {
       controller.abort()
     }
-  }, [id])
+  }, [id, profileContent.error.loadFailed, profileContent.error.missingUserId])
 
   function handleLogout() {
     clearStoredAuthSession()
@@ -658,22 +640,38 @@ export default function Profile({ locale, onLocaleChange, user, onLoginSuccess }
       {state.isLoading ? <ProfileLoadingSkeleton /> : null}
 
       {!state.isLoading && state.errorMessage ? (
-        <ProfileErrorState message={state.errorMessage} />
+        <ProfileErrorState message={state.errorMessage} content={profileContent} />
       ) : null}
 
       {!state.isLoading && !state.errorMessage ? (
         <ProfileShell>
           <div className="space-y-4 sm:space-y-6">
-            <ProfileHeroSection profile={state.profile} locale={locale} />
+            <ProfileHeroSection
+              profile={state.profile}
+              locale={locale}
+              content={profileContent}
+            />
 
             <div className="grid gap-4 xl:grid-cols-2">
-              <PersonalInfoCard profile={state.profile} onLogout={handleLogout} />
-              <FeaturesCard profile={state.profile} locale={locale} />
+              <PersonalInfoCard
+                profile={state.profile}
+                onLogout={handleLogout}
+                content={profileContent}
+              />
+              <FeaturesCard
+                profile={state.profile}
+                locale={locale}
+                content={profileContent}
+              />
             </div>
 
-            <LevelPathSection profile={state.profile} />
+            <LevelPathSection profile={state.profile} content={profileContent} />
 
-            <ActivityHistoryTable profile={state.profile} locale={locale} />
+            <ActivityHistoryTable
+              profile={state.profile}
+              locale={locale}
+              content={profileContent}
+            />
           </div>
         </ProfileShell>
       ) : null}
