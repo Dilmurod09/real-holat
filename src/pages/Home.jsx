@@ -34,7 +34,7 @@ export default function Home({ locale, onLocaleChange, user }) {
         </section>
       ) : null}
       <Hero {...content.hero} />
-      <OrangeBubbleSection />
+      <OrangeBubbleSection {...content.orangeBubble} />
       <RegionInfoSection {...content.regionInfo} stats={mainPageStats} />
       <TruthAggregationBox
         {...truthAggregation}
