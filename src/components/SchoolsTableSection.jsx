@@ -29,6 +29,10 @@ export default function SchoolsTableSection({
   const errorText =
     tableUi?.errorText ?? 'Не удалось загрузить школы. Попробуйте обновить страницу.'
 
+  function getSchoolRouteId(row) {
+    return row?.infrastructureId ?? row?.id ?? row?.num
+  }
+
   return (
     <section id={id} className="bg-[#F8F8F8] py-8 md:py-12">
       <div className="section-shell">
@@ -41,7 +45,7 @@ export default function SchoolsTableSection({
             {tableRows.map((row) => (
               <Link
                 key={`${row.num}-${row.name}`}
-                to={`/schools/${row.num}`}
+                to={`/schools/${getSchoolRouteId(row)}`}
                 className={`block rounded-[22px] border p-4 ${row.highlight ? 'border-[#FF622E] bg-[#FF622E] text-white' : 'border-[#F3E2DB] bg-white text-[#1F1F1F]'}`}
               >
                 <div className="flex items-start justify-between gap-4">
@@ -105,7 +109,7 @@ export default function SchoolsTableSection({
                     <td className="px-4 py-4">{row.num}</td>
                     <td className="px-4 py-4">
                       <Link
-                        to={`/schools/${row.num}`}
+                        to={`/schools/${getSchoolRouteId(row)}`}
                         className={`font-medium hover:underline ${row.highlight ? 'text-white' : 'text-[#1F1F1F]'}`}
                       >
                         {row.name}

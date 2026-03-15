@@ -14,6 +14,7 @@ import Login from '@/pages/Login'
 import About from '@/pages/About'
 import Contact from '@/pages/Contact'
 import Profile from '@/pages/Profile'
+import LightningMarketplace from '@/pages/LightningMarketplace'
 
 const LOCALE_STORAGE_KEY = 'realholat-locale'
 
@@ -79,6 +80,10 @@ export default function App() {
       <Route path="/schools/:schoolId" element={<SchoolDetails {...commonProps} />} />
       <Route path="/login" element={<Login {...commonProps} />} />
       <Route path="/profile/:id" element={<Profile {...commonProps} />} />
+      <Route
+        path="/lightning-marketplace"
+        element={<LightningMarketplace {...commonProps} />}
+      />
       <Route path="/about" element={<About {...commonProps} />} />
       <Route path="/contact" element={<Contact {...commonProps} />} />
       <Route path="*" element={<Home {...commonProps} />} />

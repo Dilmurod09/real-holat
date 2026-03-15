@@ -139,6 +139,8 @@ function createSchoolRow(infrastructure, index, ui) {
   const complaints = toNumber(infrastructure.verified_reports_count)
 
   return {
+    id: infrastructure.id,
+    infrastructureId: infrastructure.id,
     num: index + 1,
     name: infrastructure.name || ui?.untitledLabel || noDataLabel,
     region: infrastructure.address || noDataLabel,
