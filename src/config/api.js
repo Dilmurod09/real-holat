@@ -5,6 +5,9 @@ export const apiConfig = {
     search: import.meta.env.VITE_API_SEARCH_ENDPOINT ?? '/search',
     faq: import.meta.env.VITE_API_FAQ_ENDPOINT ?? '/faq',
     schools: import.meta.env.VITE_API_SCHOOLS_ENDPOINT ?? '/schools',
+    mainPageStats:
+      import.meta.env.VITE_API_MAIN_PAGE_STATS_ENDPOINT ??
+      'https://realholat-production.up.railway.app/api/v1/stats/main-page',
     truthAggregation:
       import.meta.env.VITE_API_TRUTH_ENDPOINT ?? '/analytics/truth-aggregation',
     regionMap: import.meta.env.VITE_API_REGION_MAP_ENDPOINT ?? '/regions/map',

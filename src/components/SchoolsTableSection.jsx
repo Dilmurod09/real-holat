@@ -8,6 +8,7 @@ export default function SchoolsTableSection({
   rows = [],
   ui,
   api,
+  condition = 'best',
 }) {
   const { schoolsTable } = useTopSchoolsTableData({
     id,
@@ -15,6 +16,7 @@ export default function SchoolsTableSection({
     rows,
     ui,
     api,
+    condition,
   })
 
   const tableColumns = schoolsTable?.columns ?? columns

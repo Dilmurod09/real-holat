@@ -40,7 +40,14 @@ function createState({
   }
 }
 
-export function useTopSchoolsTableData({ id, columns, rows, ui, api } = {}) {
+export function useTopSchoolsTableData({
+  id,
+  columns,
+  rows,
+  ui,
+  api,
+  condition = 'best',
+} = {}) {
   const [state, setState] = useState(() =>
     createState({
       id,
@@ -73,6 +80,7 @@ export function useTopSchoolsTableData({ id, columns, rows, ui, api } = {}) {
         const { infrastructures, count } = await fetchInfrastructures({
           signal: controller.signal,
           tops: 6,
+          condition,
         })
 
         startTransition(() => {
@@ -115,7 +123,7 @@ export function useTopSchoolsTableData({ id, columns, rows, ui, api } = {}) {
     return () => {
       controller.abort()
     }
-  }, [api, columns, id, rows, ui])
+  }, [api, columns, condition, id, rows, ui])
 
   return state
 }

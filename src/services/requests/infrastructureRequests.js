@@ -1,7 +1,7 @@
 import { getApiUrl, apiConfig } from '@/config/api'
 import { apiClient } from '@/services/apiClient'
 
-export async function fetchInfrastructures({ signal, tops } = {}) {
+export async function fetchInfrastructures({ signal, tops, condition } = {}) {
   const url = getApiUrl(apiConfig.endpoints.infrastructures)
 
   if (!url) {
@@ -15,6 +15,10 @@ export async function fetchInfrastructures({ signal, tops } = {}) {
 
   if (tops !== undefined && tops !== null) {
     requestUrl.searchParams.set('tops', String(tops))
+  }
+
+  if (condition) {
+    requestUrl.searchParams.set('condition', String(condition))
   }
 
   const payload = await apiClient(requestUrl.toString(), { signal })

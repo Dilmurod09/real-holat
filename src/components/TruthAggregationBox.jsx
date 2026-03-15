@@ -1,14 +1,32 @@
 export default function TruthAggregationBox({
   id,
   heading,
-  checked = 150,
-  total = 200,
+  checked = 0,
+  total = 0,
+  percent,
   entityLabel = 'школ',
   actions = [],
   api,
+  activeCondition,
+  onConditionChange,
 }) {
-  const safeTotal = total > 0 ? total : 1
-  const percent = Math.min(100, Math.round((checked / safeTotal) * 100))
+  const resolvedPercent =
+    Number.isFinite(Number(percent))
+      ? Math.min(100, Math.max(0, Math.round(Number(percent))))
+      : Math.min(100, Math.round(((checked || 0) / Math.max(total || 0, 1)) * 100))
+
+  function handleActionClick(action) {
+    if (action.condition) {
+      onConditionChange?.(action.condition)
+    }
+
+    if (typeof document !== 'undefined' && action.href?.startsWith('#')) {
+      document.querySelector(action.href)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }
+  }
 
   return (
     <section id={id} className="bg-[#F8F8F8] py-8 md:py-12">
@@ -23,15 +41,23 @@ export default function TruthAggregationBox({
               {heading}: <span className="text-[#FF622E]">{checked}</span>/{total} {entityLabel}
             </h2>
             <div className="flex flex-col gap-3 sm:flex-row">
-              {actions.map((action) => (
-                <a
-                  key={action.label}
-                  href={action.href}
-                  className={action.variant === 'secondary' ? 'btn-secondary' : 'btn-primary'}
-                >
-                  {action.label} <span aria-hidden="true">&raquo;</span>
-                </a>
-              ))}
+              {actions.map((action) => {
+                const isActive = action.condition
+                  ? action.condition === activeCondition
+                  : action.variant !== 'secondary'
+
+                return (
+                  <button
+                    key={action.label}
+                    type="button"
+                    className={isActive ? 'btn-primary' : 'btn-secondary'}
+                    aria-pressed={action.condition ? isActive : undefined}
+                    onClick={() => handleActionClick(action)}
+                  >
+                    {action.label} <span aria-hidden="true">&raquo;</span>
+                  </button>
+                )
+              })}
             </div>
           </div>
 
@@ -41,16 +67,16 @@ export default function TruthAggregationBox({
               role="progressbar"
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-valuenow={percent}
-              aria-label={`${heading}: ${percent}%`}
+              aria-valuenow={resolvedPercent}
+              aria-label={`${heading}: ${resolvedPercent}%`}
             >
               <div
                 className="h-full rounded-[14px] bg-[#FF622E] transition-all duration-500"
-                style={{ width: `${percent}%` }}
+                style={{ width: `${resolvedPercent}%` }}
               />
             </div>
             <div className="text-right text-3xl font-extrabold tracking-[-0.04em] text-[#111827]">
-              {percent}%
+              {resolvedPercent}%
             </div>
           </div>
         </div>
