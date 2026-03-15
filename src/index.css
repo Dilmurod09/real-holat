@@ -147,6 +147,22 @@ input:focus-visible {
   .btn-secondary:hover {
     background: #fff2ec;
   }
+
+  .orange-bubble-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f1ec;
+    padding: 0.55rem 1.5rem;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+  }
+
+  .orange-bubble-button:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .search-box {
