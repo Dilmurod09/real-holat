@@ -1,16 +1,32 @@
+import { getApiUrl, apiConfig } from '@/config/api'
 import { apiClient } from '@/services/apiClient'
-import { API_ENDPOINTS } from '@/services/endpoints'
 
-/**
- * Start Telegram auth flow. When API_AUTH_TELEGRAM_URL is set,
- * returns user data (e.g. { username }) from backend.
- * Until then returns mock user for demo.
- */
-export async function loginWithTelegram() {
-  const url = API_ENDPOINTS.authTelegram
-  if (url) {
-    const data = await apiClient(url, { method: 'POST' })
-    return data?.user ?? data
+export async function verifyTelegramOtp({ code, signal } = {}) {
+  const url = getApiUrl(apiConfig.endpoints.telegramOtpLogin)
+
+  if (!url) {
+    throw new Error('Telegram OTP login API URL is required')
   }
-  return { username: 'TelegramUser' }
+
+  const payload = await apiClient(url, {
+    method: 'POST',
+    signal,
+    body: { code },
+  })
+
+  if (payload?.error) {
+    throw new Error(payload.message || 'Не удалось подтвердить код. Попробуйте ещё раз.')
+  }
+
+  const accessToken = payload?.data?.access_token
+  const user = payload?.data?.user
+
+  if (!accessToken || !user) {
+    throw new Error('Сервер не вернул данные авторизации. Попробуйте ещё раз.')
+  }
+
+  return {
+    accessToken,
+    user,
+  }
 }

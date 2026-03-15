@@ -18,7 +18,7 @@ export const siteChromeContent = {
     },
   },
   auth: {
-    label: 'Войти',
+    label: 'Login / Войти',
     href: '/login',
   },
   locale: {

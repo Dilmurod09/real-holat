@@ -17,13 +17,16 @@ export default function Navbar({
     locale?.options?.map((option) =>
       typeof option === 'string'
         ? { code: option.toLowerCase(), label: option }
-        : option
+        : option,
     ) ?? [
       { code: 'ru', label: 'Ru' },
       { code: 'uzb', label: 'Uzb' },
       { code: 'en', label: 'En' },
     ]
   const activeLocale = locale?.active ?? localeOptions[0]?.code ?? 'ru'
+  const userDisplayName =
+    user?.tg_user_name ?? user?.username ?? user?.full_name ?? null
+  const userProfileHref = user?.id ? `/profile/${user.id}` : null
 
   const localeSwitcher = (
     <div
@@ -52,45 +55,67 @@ export default function Navbar({
     </div>
   )
 
-  const actionLinks = (
-    <>
-      <form
-        className="search-box w-full md:w-auto"
-        data-api-endpoint={search?.api?.endpoint}
-        data-api-resource={search?.api?.resource}
-        onSubmit={(event) => event.preventDefault()}
-      >
-        <input
-          type="search"
-          placeholder={search?.placeholder ?? 'Поиск'}
-          className="search-input"
-          aria-label={search?.buttonLabel ?? 'Искать'}
-        />
-        <button
-          type="submit"
-          className="search-btn"
-          aria-label={search?.buttonLabel ?? 'Искать'}
-        >
-          <Search size={18} />
-        </button>
-      </form>
+  function renderAuthAction(onActionClick) {
+    if (userDisplayName) {
+      if (!userProfileHref) {
+        return (
+          <span className="inline-flex items-center rounded-full border border-[#F3E2DB] bg-[#FFF7F3] px-4 py-2 text-[15px] font-semibold text-[#1F1F1F]">
+            {userDisplayName}
+          </span>
+        )
+      }
 
-      {user?.username ? (
-        <span className="text-[16px] font-medium text-[#1F1F1F]">
-          {user.username}
-        </span>
-      ) : (
+      return (
         <Link
-          to={auth?.href ?? '/login'}
-          className="text-[16px] font-medium text-[#1F1F1F] hover:text-[#FF622E]"
+          to={userProfileHref}
+          className="inline-flex items-center rounded-full border border-[#F3E2DB] bg-[#FFF7F3] px-4 py-2 text-[15px] font-semibold text-[#1F1F1F] hover:border-[#FF622E] hover:text-[#FF622E]"
+          onClick={onActionClick}
         >
-          {auth?.label ?? 'Войти'}
+          {userDisplayName}
         </Link>
-      )}
+      )
+    }
 
-      {localeSwitcher}
-    </>
-  )
+    return (
+      <Link
+        to={auth?.href ?? '/login'}
+        className="text-[16px] font-medium text-[#1F1F1F] hover:text-[#FF622E]"
+        onClick={onActionClick}
+      >
+        {auth?.label ?? 'Войти'}
+      </Link>
+    )
+  }
+
+  function renderActionLinks(onActionClick) {
+    return (
+      <>
+        <form
+          className="search-box w-full md:w-auto"
+          data-api-endpoint={search?.api?.endpoint}
+          data-api-resource={search?.api?.resource}
+          onSubmit={(event) => event.preventDefault()}
+        >
+          <input
+            type="search"
+            placeholder={search?.placeholder ?? 'Поиск'}
+            className="search-input"
+            aria-label={search?.buttonLabel ?? 'Искать'}
+          />
+          <button
+            type="submit"
+            className="search-btn"
+            aria-label={search?.buttonLabel ?? 'Искать'}
+          >
+            <Search size={18} />
+          </button>
+        </form>
+
+        {renderAuthAction(onActionClick)}
+        {localeSwitcher}
+      </>
+    )
+  }
 
   return (
     <header className="w-full border-b border-orange-100 bg-white">
@@ -118,7 +143,7 @@ export default function Navbar({
           ))}
         </nav>
 
-        <div className="hidden items-center gap-4 md:flex">{actionLinks}</div>
+        <div className="hidden items-center gap-4 md:flex">{renderActionLinks()}</div>
 
         <button
           type="button"
@@ -150,7 +175,7 @@ export default function Navbar({
                 </Link>
               ))}
             </nav>
-            <div className="flex flex-col gap-3">{actionLinks}</div>
+            <div className="flex flex-col gap-3">{renderActionLinks(() => setIsMenuOpen(false))}</div>
           </div>
         </div>
       ) : null}
