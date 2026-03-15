@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import MapboxMap from '@/components/MapboxMap'
 import FaqSection from '@/components/FaqSection'
-import OrangeBubbleSection from '@/components/OrangeBubbleSection'
 import { getLocalizedHomePageContent } from '@/content/localizedContent'
 import { useInfrastructureData } from '@/hooks/useInfrastructureData'
 import SiteLayout from '@/layouts/SiteLayout'
@@ -265,7 +264,7 @@ function ProblemMetaStep() {
 }
 
 export default function FirstStage({ locale, onLocaleChange, user }) {
-  const { site, regionInfo, orangeBubble, faq } = getLocalizedHomePageContent(
+  const { site, regionInfo, faq } = getLocalizedHomePageContent(
     locale,
   )
 
@@ -275,7 +274,6 @@ export default function FirstStage({ locale, onLocaleChange, user }) {
       <ProblemAddressStep map={regionInfo?.map} />
       <ProblemDescriptionStep />
       <ProblemMetaStep />
-      <OrangeBubbleSection {...orangeBubble} />
       <FaqSection {...faq} />
     </SiteLayout>
   )
