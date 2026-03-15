@@ -114,7 +114,7 @@ function createInfoRow(label, value) {
   return row
 }
 
-function buildPopupNode(point, ui, onBuildRoute) {
+function buildPopupNode(point, ui, onAction, actionLabel) {
   const wrapper = document.createElement('div')
   wrapper.style.display = 'grid'
   wrapper.style.gap = '10px'
@@ -138,7 +138,7 @@ function buildPopupNode(point, ui, onBuildRoute) {
 
   const button = document.createElement('button')
   button.type = 'button'
-  button.textContent = ui?.routeButtonLabel ?? 'Build Route'
+  button.textContent = actionLabel ?? ui?.routeButtonLabel ?? 'Build Route'
   button.style.border = 'none'
   button.style.borderRadius = '12px'
   button.style.background = '#ff622e'
@@ -152,7 +152,7 @@ function buildPopupNode(point, ui, onBuildRoute) {
   const handleClick = (event) => {
     event.preventDefault()
     event.stopPropagation()
-    onBuildRoute(point)
+    onAction(point)
   }
 
   button.addEventListener('click', handleClick)
@@ -298,7 +298,12 @@ function loadLeaflet() {
   return leafletPromise
 }
 
-export default function MapboxMap({ map }) {
+export default function MapboxMap({
+  map,
+  onPointSelect,
+  onPopupAction,
+  popupActionLabel,
+}) {
   const containerRef = useRef(null)
   const mapRef = useRef(null)
   const leafletRef = useRef(null)
@@ -313,6 +318,7 @@ export default function MapboxMap({ map }) {
     tone: 'info',
     isLocating: false,
   })
+  const hasCustomPopupAction = Boolean(onPopupAction)
 
   const resolvedCenter =
     toValidCoordinates(map?.view?.center) ?? map?.points?.[0]?.coordinates ?? DEFAULT_CENTER
@@ -490,6 +496,21 @@ export default function MapboxMap({ map }) {
     )
   })
 
+  const handlePointSelection = useEffectEvent((point) => {
+    onPointSelect?.(point)
+  })
+
+  const handlePopupAction = useEffectEvent((point) => {
+    handlePointSelection(point)
+
+    if (onPopupAction) {
+      onPopupAction(point)
+      return
+    }
+
+    handleBuildRoute(point)
+  })
+
   useEffect(() => {
     if (!containerRef.current) {
       return undefined
@@ -623,6 +644,9 @@ export default function MapboxMap({ map }) {
         coordinates: toValidCoordinates(point.coordinates),
       }))
       .filter((point) => point.coordinates)
+    const resolvedPopupActionLabel = hasCustomPopupAction
+      ? popupActionLabel ?? map?.ui?.reportButtonLabel ?? 'Жаловаться'
+      : popupActionLabel ?? map?.ui?.routeButtonLabel ?? 'Build Route'
 
     if (points.length === 0) {
       instance.setView(toLeafletCoordinates(resolvedCenter), resolvedZoom, {
@@ -635,7 +659,12 @@ export default function MapboxMap({ map }) {
 
     points.forEach((point) => {
       const leafletCoordinates = toLeafletCoordinates(point.coordinates)
-      const popup = buildPopupNode(point, map?.ui, handleBuildRoute)
+      const popup = buildPopupNode(
+        point,
+        map?.ui,
+        handlePopupAction,
+        resolvedPopupActionLabel,
+      )
 
       popupCleanupRef.current.push(popup.cleanup)
 
@@ -646,6 +675,11 @@ export default function MapboxMap({ map }) {
         fillColor: statusColors[point.statusTone] ?? '#94a3b8',
         fillOpacity: 1,
       }).addTo(markersLayerRef.current)
+
+      marker.on('click', () => {
+        handlePointSelection(point)
+        marker.openPopup()
+      })
 
       marker.bindPopup(popup.node, {
         maxWidth: 280,
@@ -666,7 +700,15 @@ export default function MapboxMap({ map }) {
       padding: [48, 48],
       maxZoom: resolvedMaxZoom,
     })
-  }, [map?.points, map?.ui, resolvedCenter, resolvedMaxZoom, resolvedZoom])
+  }, [
+    hasCustomPopupAction,
+    map?.points,
+    map?.ui,
+    popupActionLabel,
+    resolvedCenter,
+    resolvedMaxZoom,
+    resolvedZoom,
+  ])
 
   useEffect(() => {
     if (!locationState.message) {

@@ -92,12 +92,24 @@ function createPointFromInfrastructure(infrastructure, map) {
   const noDataLabel = map?.ui?.noDataLabel ?? 'N/A'
   const statusTone = getStatusTone(infrastructure.status)
   const statusLabel = getStatusLabel(infrastructure.status, map?.statuses)
+  const overallRating = formatRating(infrastructure.overall_rating, noDataLabel)
+  const name = infrastructure.name || map?.ui?.untitledLabel || noDataLabel
+  const infrastructureTypeName =
+    infrastructure.infrastructure_type_info?.name ||
+    infrastructure.type ||
+    noDataLabel
 
   return {
     id: infrastructure.id,
-    title: infrastructure.name || map?.ui?.untitledLabel || noDataLabel,
+    infrastructureId: infrastructure.id,
+    name,
+    title: name,
     region: infrastructure.address || noDataLabel,
-    rating: formatRating(infrastructure.overall_rating, noDataLabel),
+    rating: overallRating,
+    overallRating,
+    type: infrastructureTypeName,
+    infrastructureTypeName,
+    status: infrastructure.status || noDataLabel,
     statusLabel,
     statusTone,
     coordinates,

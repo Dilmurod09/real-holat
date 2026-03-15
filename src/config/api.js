@@ -22,6 +22,12 @@ export const apiConfig = {
     users:
       import.meta.env.VITE_API_USERS_ENDPOINT ??
       'https://realholat-production.up.railway.app/api/v1/users',
+    imageUpload:
+      import.meta.env.VITE_API_IMAGE_UPLOAD_ENDPOINT ??
+      'https://realholat-production.up.railway.app/api/v1/image/upload',
+    reports:
+      import.meta.env.VITE_API_REPORTS_ENDPOINT ??
+      'https://realholat-production.up.railway.app/api/v1/reports',
     routing:
       import.meta.env.VITE_API_ROUTING_ENDPOINT ??
       'https://router.project-osrm.org/route/v1/driving',

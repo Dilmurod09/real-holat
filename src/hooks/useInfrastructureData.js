@@ -1,9 +1,16 @@
-import { startTransition, useEffect, useState } from 'react'
+import { startTransition, useEffect, useMemo, useState } from 'react'
 
 import { buildInfrastructureContent } from '@/services/infrastructureService'
 import { fetchInfrastructures } from '@/services/requests/infrastructureRequests'
 
-function createState({ map, leaderboard, infrastructures = [], count = 0, error = null, isLoading }) {
+function createState({
+  map,
+  leaderboard,
+  infrastructures = [],
+  count = 0,
+  error = null,
+  isLoading,
+}) {
   const content = buildInfrastructureContent({
     map,
     leaderboard,
@@ -30,26 +37,38 @@ function createState({ map, leaderboard, infrastructures = [], count = 0, error 
   }
 }
 
+function createFetchState({
+  infrastructures = [],
+  count = 0,
+  error = null,
+  isLoading = true,
+} = {}) {
+  return {
+    infrastructures,
+    count,
+    error,
+    isLoading,
+  }
+}
+
 export function useInfrastructureData({ map, leaderboard } = {}) {
-  const [state, setState] = useState(() =>
-    createState({
-      map,
-      leaderboard,
-      isLoading: true,
-    }),
-  )
+  const [fetchState, setFetchState] = useState(() => createFetchState())
+  const infrastructureResourceKey =
+    map?.api?.endpoint ??
+    leaderboard?.api?.endpoint ??
+    map?.api?.resource ??
+    leaderboard?.api?.resource ??
+    'infrastructures'
 
   useEffect(() => {
     const controller = new AbortController()
 
     startTransition(() => {
-      setState(
-        createState({
-          map,
-          leaderboard,
-          isLoading: true,
-        }),
-      )
+      setFetchState((currentState) => ({
+        ...currentState,
+        error: null,
+        isLoading: true,
+      }))
     })
 
     async function loadInfrastructures() {
@@ -59,10 +78,8 @@ export function useInfrastructureData({ map, leaderboard } = {}) {
         })
 
         startTransition(() => {
-          setState(
-            createState({
-              map,
-              leaderboard,
+          setFetchState(
+            createFetchState({
               infrastructures,
               count,
               isLoading: false,
@@ -75,14 +92,11 @@ export function useInfrastructureData({ map, leaderboard } = {}) {
         }
 
         startTransition(() => {
-          setState(
-            createState({
-              map,
-              leaderboard,
-              error,
-              isLoading: false,
-            }),
-          )
+          setFetchState((currentState) => ({
+            ...currentState,
+            error,
+            isLoading: false,
+          }))
         })
       }
     }
@@ -92,7 +106,25 @@ export function useInfrastructureData({ map, leaderboard } = {}) {
     return () => {
       controller.abort()
     }
-  }, [map, leaderboard])
+  }, [infrastructureResourceKey])
 
-  return state
+  return useMemo(
+    () =>
+      createState({
+        map,
+        leaderboard,
+        infrastructures: fetchState.infrastructures,
+        count: fetchState.count,
+        error: fetchState.error,
+        isLoading: fetchState.isLoading,
+      }),
+    [
+      fetchState.count,
+      fetchState.error,
+      fetchState.infrastructures,
+      fetchState.isLoading,
+      leaderboard,
+      map,
+    ],
+  )
 }
